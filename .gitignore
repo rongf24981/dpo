@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local caches
+.cache/
+.pytest_cache/
+
+# Generated data and model artifacts
+data/
+outputs/
+merged/
+results/
+checkpoints/
+checkpoint-*/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.parquet
+*.arrow
+*.jsonl
+*.csv
+
+# Logs
+logs/
+*.log
+
+# Secrets
+.env
+*.env
+secrets.*
+*token*
+*key*
