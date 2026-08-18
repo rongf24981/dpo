@@ -7,7 +7,7 @@ The current shared code supports:
 - generating preference pairs from known correct/secure Python reference solutions and generated insecure rewrites;
 - converting ProSec preference data into TRL conversational preference JSONL;
 - LoRA DPO training with ProSec-style hyperparameters;
-- requesting SimPO-style loss through TRL if the installed TRL version supports `loss_type="simpo"` and `simpo_gamma`.
+- running ProSec-style SimPO through TRL's CPO/SimPO trainer path when the installed TRL version supports it.
 
 No generated data, model weights, checkpoints, API keys, or benchmark outputs are included.
 
@@ -18,6 +18,7 @@ simple_gen/py/6_generate_revision_pairs.py
 simple_gen/py/8_generate_reference_negative_pairs.py
 simple_gen/py/prepare_prosec_preferences.py
 simple_gen/py/7_train_dpo.py
+simple_gen/py/7_train_simpo.py
 simple_gen/py/configs/deepspeed_zero3_bf16.json
 ```
 
@@ -95,16 +96,15 @@ The ProSec Table 6 SimPO setting for non-Phi models is:
 - LoRA `r=8`, alpha `16`;
 - total batch size `64`.
 
-This command requests SimPO through TRL's `DPOTrainer` only if the installed TRL version supports it:
+This command runs true SimPO through TRL's CPO/SimPO trainer path. It is separate from the DPO trainer so the two methods are not accidentally mixed.
 
 ```bash
 cd simple_gen/py
 
-deepspeed --num_gpus=4 7_train_dpo.py \
+deepspeed --num_gpus=4 7_train_simpo.py \
   --train-jsonl data/prosec_python_mixed_qwen25coder7b.jsonl \
   --model Qwen/Qwen2.5-Coder-7B-Instruct \
   --output-dir outputs/qwen25coder_7b_prosec_python_simpo_400step \
-  --loss-type simpo \
   --beta 1.5 \
   --simpo-gamma 0.5 \
   --learning-rate 5e-6 \
@@ -125,7 +125,7 @@ deepspeed --num_gpus=4 7_train_dpo.py \
   --lora-dropout 0.05
 ```
 
-If this fails with a TRL `loss_type` or `simpo_gamma` error, the installed TRL version does not support SimPO through `DPOTrainer`; in that case use the DPO command above or upgrade/replace the trainer with a SimPO-capable implementation.
+If this fails with a CPO/SimPO import or `simpo_gamma` error, the installed TRL version does not support true SimPO. Upgrade TRL or use ProSec's original training dependency before running the 400-step experiment.
 
 ## Our Execution-Filtered Preference Data
 
