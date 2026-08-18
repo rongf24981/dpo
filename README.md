@@ -47,10 +47,10 @@ This uses the ProSec paper's DPO-style hyperparameters where possible:
 - learning rate `5e-6`;
 - DPO beta `0.05`.
 
-For two GPUs with per-device batch size 1:
+Preferred ProSec-style setup with four GPUs and per-device batch size 2:
 
 ```text
-1 * 2 GPUs * gradient_accumulation_steps 32 = total batch size 64
+2 * 4 GPUs * gradient_accumulation_steps 8 = total batch size 64
 ```
 
 Example:
@@ -58,7 +58,7 @@ Example:
 ```bash
 cd simple_gen/py
 
-deepspeed --num_gpus=2 7_train_dpo.py \
+deepspeed --num_gpus=4 7_train_dpo.py \
   --train-jsonl data/prosec_python_mixed_qwen25coder7b.jsonl \
   --model Qwen/Qwen2.5-Coder-7B-Instruct \
   --output-dir outputs/qwen25coder_7b_prosec_python_dpo_400step \
@@ -66,8 +66,8 @@ deepspeed --num_gpus=2 7_train_dpo.py \
   --beta 0.05 \
   --learning-rate 5e-6 \
   --max-steps 400 \
-  --per-device-train-batch-size 1 \
-  --gradient-accumulation-steps 32 \
+  --per-device-train-batch-size 2 \
+  --gradient-accumulation-steps 8 \
   --max-length 4096 \
   --max-prompt-length 2048 \
   --logging-steps 10 \
@@ -100,7 +100,7 @@ This command requests SimPO through TRL's `DPOTrainer` only if the installed TRL
 ```bash
 cd simple_gen/py
 
-deepspeed --num_gpus=2 7_train_dpo.py \
+deepspeed --num_gpus=4 7_train_dpo.py \
   --train-jsonl data/prosec_python_mixed_qwen25coder7b.jsonl \
   --model Qwen/Qwen2.5-Coder-7B-Instruct \
   --output-dir outputs/qwen25coder_7b_prosec_python_simpo_400step \
@@ -109,8 +109,8 @@ deepspeed --num_gpus=2 7_train_dpo.py \
   --simpo-gamma 0.5 \
   --learning-rate 5e-6 \
   --max-steps 400 \
-  --per-device-train-batch-size 1 \
-  --gradient-accumulation-steps 32 \
+  --per-device-train-batch-size 2 \
+  --gradient-accumulation-steps 8 \
   --max-length 4096 \
   --max-prompt-length 2048 \
   --logging-steps 10 \
